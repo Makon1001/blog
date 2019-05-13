@@ -29,11 +29,7 @@ class BlogController extends AbstractController
      */
     public function show($slug = 'Article Sans Titre')
     {
-        $arrayTitre = (explode('-', $slug));
-        foreach ($arrayTitre as $item) {
-            $arrTitrAvMaj[] = ucwords($item);
-        }
-        $slug = implode(' ', $arrTitrAvMaj);
+         $slug = ucwords(implode(' ', (explode('-', $slug))));
         return $this->render('blog/show.html.twig', [
             'slug' => $slug,
         ]);

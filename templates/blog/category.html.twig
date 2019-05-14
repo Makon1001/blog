@@ -1,13 +1,14 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}All articles{% endblock %}
+{% block title %}All articles by Category : {{ categoryName }}{% endblock %}
 
 {% block body %}
-    <h1>All articles from article s table : </h1>
+    <h1>All articles with the same category from article s table : </h1>
     {% for article in articles %}
         <div>
             <h2>{{ loop.index }} / {{ article.title }} - Category : {{ article.category.name }}</h2>
             <p>{{ article.content }}</p>
+            <p>Id de l'article : {{ article.id }}</p>
         </div>
     {% else %}
         Aucun article trouvé.

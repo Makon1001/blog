@@ -5,9 +5,11 @@ namespace App\Controller;
 
 
 use App\Entity\Category;
+use App\Entity\Tag;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Validation;
 use Symfony\Component\HttpFoundation\Response;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Article;
 
@@ -83,10 +85,10 @@ class BlogController extends AbstractController
 
     /**
      * @param string $category
-     *  @Route("/blog/category/{name<^[a-zA-Z0-9-]+$>}",
-     *     defaults={"name" = null},
-     *     name="show_category")
-     * @return Response
+     * @Route("/blog/category/{name<^[a-zA-Z0-9-]+$>}",
+     *      defaults={"name" = null},
+     *  name="show_category")
+     *  @return Response
      */
     public function showByCategory(Category $category)
     {
@@ -107,10 +109,6 @@ class BlogController extends AbstractController
 
 
     }
-
-
-
-
     /*public function showByCategory(string $categoryName)
     {
         if (!$categoryName) {
@@ -140,6 +138,51 @@ class BlogController extends AbstractController
         );
     }*/
 
+
+    /**
+     * @param Tag $tag
+     * @Route("/tag/{name<\w+>}",defaults={"name" = null}, name="show_tag")
+     * @return Response
+     */
+    public function showByTag (Tag $tag)
+    {
+        if(!$tag) {
+            throw $this
+                ->createNotFoundException('No tag Name send ');
+        }
+
+        $articles = $tag->getArticles();
+
+        return $this->render(
+            'blog/tag.html.twig',
+            [
+                'articles' => $articles,
+                'tag' => $tag
+            ]
+        );
+
+    }
+
+    /**
+     * @param Article $article
+     * @Route("article/{id}", name="show_ById")
+     */
+    public function showById (Article $article)
+    {
+        if (!$article) {
+            throw $this->createNotFoundException(
+                'No article with '.$article.' title, found in article\'s table.'
+            );
+        }
+
+
+        return $this->render(
+            'blog/detail.html.twig',
+            [
+                'article' => $article
+            ]
+        );
+    }
 
 
 }

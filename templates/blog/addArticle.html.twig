@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+{% form_theme form 'bootstrap_4_layout.html.twig' %}
+{% block body %}
+    <h1>
+        {% if editMod == true  %}
+            Modifier un article
+        {% else %}
+            Ajouter un article
+        {% endif %}
+    </h1>
+
+    {% if editMod == false  %}
+        <table class="table">
+            <tr>
+                <th>id</th>
+                <th>Titre</th>
+                <th>Contenu</th>
+                <th>categorie</th>
+                <th>Tags</th>
+            </tr>
+            {% for article in allArticle %}
+
+                <tr>
+                    <td>{{ article.id }}</td>
+                    <td><a href="{{ path('blog_updateArticle', {'id': article.id })}}">{{ article.title }}</a></td>
+                    <td>{{ article.content }}</td>
+                    <td>{{ article.category.name }}</td>
+                    <td>{% for tag in article.tags %}{{ tag.name }} {% endfor %}</td>
+                </tr>
+
+            {% endfor %}
+        </table>
+    {% endif %}
+
+
+
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+
+    <button class="btn btn-success">
+        {% if editMod == true %}
+            Enregistrer les modifications
+        {% else %}
+            Ajouter
+        {% endif %}
+    </button>
+    {{ form_end(form) }}
+{% endblock %}

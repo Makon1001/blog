@@ -99,6 +99,38 @@ class BlogController extends AbstractController
     }
 
 
+    /**
+     * @param Article|null $article
+     * @param Request $request
+     * @param ObjectManager $manager
+     * @Route("/blog/article/add", name="blog_addArticle")
+     * @Route("/blog/article/{id}/edit", name="blog_updateArticle")
+     */
+    public function addUpdateArticle(Article $article = null, Request $request, ObjectManager $manager)
+    {
+        if(!$article){
+            $article = new Article();
+        }
+
+        $form = $this->createForm(ArticleType::class, $article);
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $manager->persist($article);
+            $manager->flush();
+
+            return $this->redirectToRoute('blog_addArticle');
+        }
+
+        $allArticle = $this->getDoctrine()->getRepository(Article::class)->findAll();
+        return $this->render('blog/addArticle.html.twig', [
+            'editMod' => $article->getId() != null,
+            'allArticle' => $allArticle,
+            'form' => $form->createView()
+        ]);
+    }
+
 
     /**
      * Getting a article with a formatted slug for title

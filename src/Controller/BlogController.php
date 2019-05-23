@@ -3,15 +3,22 @@
 
 namespace App\Controller;
 
-
+use App\Form\ArticleType;
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManager;
+use Symfony\Component\Form\FormBuilderInterface;
 use App\Entity\Category;
 use App\Entity\Tag;
+use App\Entity\Article;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Validation;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Entity\Article;
+use App\Controller\OptionsResolver;
+use App\Form\ArticleSearchType;
+use App\Form\CategoryType;
 
 
 
@@ -25,6 +32,15 @@ class BlogController extends AbstractController
      */
     public function index()
     {
+        $form = $this->createForm(
+            ArticleSearchType::class,
+            null,
+            ['method' => Request::METHOD_GET]
+        );
+
+        $category = new Category();
+        $form2 = $this->createForm(CategoryType::class, $category);
+
         $articles = $this->getDoctrine()
             ->getRepository(Article::class)
             ->findAll();
@@ -35,11 +51,53 @@ class BlogController extends AbstractController
             );
         }
 
+
         return $this->render(
             'blog/index.html.twig',
-            ['articles' => $articles]
+            ['articles' => $articles,
+             'form' => $form->createView(),
+                'form2' => $form2->createView()
+                ]
         );
     }
+
+
+
+
+    /**
+     * @Route("/blog/addCategory", name="blog_addCategory")
+     * @Route("/blog/category/{id}/edit", name="blog_updateCategory")
+     */
+    public function AddUpdateCategory(Category $category = null, Request $request, ObjectManager $manager)
+    {
+
+        if(!$category){
+            $category = new Category();
+        }
+
+        $form = $this->createForm(CategoryType::class, $category);
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $manager->persist($category);
+            $manager->flush();
+
+            return $this->redirectToRoute('blog_addCategory');
+        }
+
+
+        $allCategory = $this->getDoctrine()
+            ->getRepository(Category::class)
+            ->findAll();
+
+        return $this->render('blog/addCategory.html.twig', [
+            'form' => $form->createView(),
+            'editMod' => $category->getId() !== null,
+            'allCategory' => $allCategory
+        ]);
+    }
+
 
 
     /**
@@ -183,6 +241,8 @@ class BlogController extends AbstractController
             ]
         );
     }
+
+
 
 
 }

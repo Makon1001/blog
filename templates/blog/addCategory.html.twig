@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+{% form_theme form 'bootstrap_4_layout.html.twig' %}
+{% block body %}
+    <h1>
+    {% if editMod == true  %}
+    Modifier une category
+    {% else %}
+    Ajouter une category
+    {% endif %}
+    </h1>
+
+    {% if editMod == false  %}
+    <table class="table">
+        <tr>
+            <th>id</th>
+            <th>Name</th>
+        </tr>
+        {% for cat in allCategory %}
+
+                <tr>
+                    <td>{{ cat.id }}</td>
+                    <td><a href="{{ path('blog_updateCategory', {'id': cat.id })}}">{{ cat.name }}</a></td>
+                </tr>
+
+        {% endfor %}
+    </table>
+    {% endif %}
+
+
+
+    {{ form_start(form) }}
+
+    {{ form_row(form.name, {'attr': {'placeholder': "Nom de la category"}})}}
+    <button class="btn btn-success">
+        {% if editMod == true %}
+            Enregistrer les modifications
+        {% else %}
+            Ajouter
+        {% endif %}
+    </button>
+    {{ form_end(form) }}
+{% endblock %}

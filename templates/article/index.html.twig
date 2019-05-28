@@ -26,8 +26,8 @@
                 <td>{% for tag in article.tags %}{{ tag.name }} {% endfor %}</td>
 
                 <td>
-                    <a href="{{ path('article_show', {'id': article.id}) }}">show</a>
-                    <a href="{{ path('article_edit', {'id': article.id}) }}">edit</a>
+                    <a href="{{ path('article_show', {'slug': article.slug}) }}">show</a>
+                    <a href="{{ path('article_edit', {'slug': article.slug}) }}">edit</a>
                 </td>
             </tr>
         {% else %}

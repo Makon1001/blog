@@ -45,6 +45,5 @@ class Slugify
     );
         $input = preg_replace(array_keys($utf8), array_values($utf8), $input);
        return $input;
-
     }
 }
